@@ -3,7 +3,7 @@
 Secondary content
 @await FlushAsync()
 @{
-    await Html.RenderPartialAsync("_PartialWithFlush");
+    await Html.RenderPartialAsync("./../Shared/_PartialWithFlush");
 }
 @using (Html.BeginForm(method: FormMethod.Post, antiforgery: false, htmlAttributes: null))
 {

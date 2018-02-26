@@ -1,3 +1,5 @@
-﻿Inside partial
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@Localizer["Hello"]
+Inside partial
 @await FlushAsync()
 After flush inside partial
