@@ -7,6 +7,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>aspnetcore;aspnetcoremvc;cshtml;razor</PackageTags>
     <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+    <SymbolsNuspecFile>$(MSBuildProjectName).symbols.nuspec</SymbolsNuspecFile>
     <Serviceable>true</Serviceable>
   </PropertyGroup>
 
@@ -25,7 +26,7 @@
     <PackageReference Include="Microsoft.Extensions.PropertyHelper.Sources" PrivateAssets="All" Version="$(MicrosoftExtensionsPropertyHelperSourcesPackageVersion)" />
   </ItemGroup>
 
-  <Target Name="PopulateNuspec" BeforeTargets="GenerateNuspec" DependsOnTargets="BuiltProjectOutputGroup;DocumentationProjectOutputGroup">
+  <Target Name="PopulateNuspec" BeforeTargets="GenerateNuspec" DependsOnTargets="BuiltProjectOutputGroup;DebugSymbolsProjectOutputGroup;DocumentationProjectOutputGroup">
 
     <PropertyGroup>
       <NuspecProperties>
@@ -49,7 +50,8 @@
         MicrosoftExtensionsFileProvidersCompositePackageVersion=$(MicrosoftExtensionsFileProvidersCompositePackageVersion);
         MicrosoftDiaSymReaderNativePackageVersion=$(MicrosoftDiaSymReaderNativePackageVersion);
         OutputBinary=@(BuiltProjectOutputGroupOutput);
-        OutputDocumentation=@(DocumentationProjectOutputGroupOutput)
+        OutputDocumentation=@(DocumentationProjectOutputGroupOutput);
+        OutputSymbol=@(DebugSymbolsProjectOutputGroupOutput);
       </NuspecProperties>
     </PropertyGroup>
   </Target>
