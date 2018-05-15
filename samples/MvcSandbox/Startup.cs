@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NSwag.AspNetCore;
 
 namespace MvcSandbox
 {
@@ -22,6 +23,9 @@ namespace MvcSandbox
         {
             app.UseDeveloperExceptionPage();
             app.UseStaticFiles();
+#pragma warning disable CS0618 // Type or member is obsolete
+            app.UseSwaggerUiWithApiExplorer();
+#pragma warning restore CS0618 // Type or member is obsolete
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
