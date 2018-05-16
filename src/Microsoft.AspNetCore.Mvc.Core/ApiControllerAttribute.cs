@@ -12,8 +12,8 @@ namespace Microsoft.AspNetCore.Mvc
     /// of the controller.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class ApiControllerAttribute : ControllerAttribute, IApiBehaviorMetadata
+    public class ApiControllerAttribute : ControllerAttribute, IApiBehaviorMetadata, IApiBehaviorConventionProviderType
     {
-        public Type Conventions { get; set; }
+        public Type ConventionType { get; set; }
     }
 }

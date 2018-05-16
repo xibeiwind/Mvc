@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -26,9 +25,9 @@ namespace Microsoft.AspNetCore.Mvc.ApiExplorer
     public class DefaultApiDescriptionProvider : IApiDescriptionProvider
     {
         private readonly MvcOptions _mvcOptions;
-        private readonly IActionResultTypeMapper _mapper;
         private readonly IInlineConstraintResolver _constraintResolver;
         private readonly IModelMetadataProvider _modelMetadataProvider;
+        private readonly ApiResponseTypeCollator _apiResponseTypeCollator;
 
         /// <summary>
         /// Creates a new instance of <see cref="DefaultApiDescriptionProvider"/>.
@@ -65,7 +64,8 @@ namespace Microsoft.AspNetCore.Mvc.ApiExplorer
             _mvcOptions = optionsAccessor.Value;
             _constraintResolver = constraintResolver;
             _modelMetadataProvider = modelMetadataProvider;
-            _mapper = mapper;
+
+            _apiResponseTypeCollator = new ApiResponseTypeCollator(_modelMetadataProvider, mapper, _mvcOptions);
         }
 
         /// <inheritdoc />
@@ -127,15 +127,8 @@ namespace Microsoft.AspNetCore.Mvc.ApiExplorer
             }
 
             var requestMetadataAttributes = GetRequestMetadataAttributes(action);
-            var responseMetadataAttributes = GetResponseMetadataAttributes(action);
 
-            // We only provide response info if we can figure out a type that is a user-data type.
-            // Void /Task object/IActionResult will result in no data.
-            var declaredReturnType = GetDeclaredReturnType(action);
-
-            var runtimeReturnType = GetRuntimeReturnType(declaredReturnType);
-
-            var apiResponseTypes = GetApiResponseTypes(responseMetadataAttributes, runtimeReturnType);
+            var apiResponseTypes = _apiResponseTypeCollator.GetApiResponseTypes(action);
             foreach (var apiResponseType in apiResponseTypes)
             {
                 apiDescription.SupportedResponseTypes.Add(apiResponseType);
@@ -494,52 +487,6 @@ namespace Microsoft.AspNetCore.Mvc.ApiExplorer
             }
 
             return results;
-        }
-
-        private Type GetDeclaredReturnType(ControllerActionDescriptor action)
-        {
-            var declaredReturnType = action.MethodInfo.ReturnType;
-            if (declaredReturnType == typeof(void) ||
-                declaredReturnType == typeof(Task))
-            {
-                return typeof(void);
-            }
-            
-            // Unwrap the type if it's a Task<T>. The Task (non-generic) case was already handled.
-            Type unwrappedType = declaredReturnType;
-            if (declaredReturnType.IsGenericType && 
-                declaredReturnType.GetGenericTypeDefinition() == typeof(Task<>))
-            {
-                unwrappedType = declaredReturnType.GetGenericArguments()[0];
-            }
-
-            // If the method is declared to return IActionResult or a derived class, that information
-            // isn't valuable to the formatter.
-            if (typeof(IActionResult).IsAssignableFrom(unwrappedType))
-            {
-                return null;
-            }
-
-            // If we get here, the type should be a user-defined data type or an envelope type
-            // like ActionResult<T>. The mapper service will unwrap envelopes.
-            unwrappedType = _mapper.GetResultDataType(unwrappedType);
-            return unwrappedType;
-        }
-
-        private Type GetRuntimeReturnType(Type declaredReturnType)
-        {
-            // If we get here, then a filter didn't give us an answer, so we need to figure out if we
-            // want to use the declared return type.
-            //
-            // We've already excluded Task, void, and IActionResult at this point.
-            //
-            // If the action might return any object, then assume we don't know anything about it.
-            if (declaredReturnType == typeof(object))
-            {
-                return null;
-            }
-
-            return declaredReturnType;
         }
 
         private IApiRequestMetadataProvider[] GetRequestMetadataAttributes(ControllerActionDescriptor action)
