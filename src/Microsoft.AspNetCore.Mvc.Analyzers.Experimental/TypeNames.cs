@@ -34,5 +34,9 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
         public const string HttpDeleteAttribute = "Microsoft.AspNetCore.Mvc.HttpDeleteAttribute";
 
         public const string FromRouteAttribute = "Microsoft.AspNetCore.Mvc.FromRouteAttribute";
+
+        public const string IApiResponseMetadataProvider = "Microsoft.AspNetCore.Mvc.ApiExplorer.IApiResponseMetadataProvider";
+
+        public const string StatusCodeAttribute = "Microsoft.AspNetCore.Mvc.ApiExplorer.StatusCodeAttribute";
     }
 }

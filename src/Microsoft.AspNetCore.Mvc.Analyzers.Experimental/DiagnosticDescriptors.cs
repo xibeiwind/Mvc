@@ -42,5 +42,23 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
                 "Usage",
                 DiagnosticSeverity.Warning,
                 isEnabledByDefault: true);
+
+        public static readonly DiagnosticDescriptor MVC7004_ApiActionIsMissingMetadata =
+            new DiagnosticDescriptor(
+                "MVC7004",
+                "API action returns an action result with status code {0} without an ApiExplorer thing for it.",
+                "API action returns an action result with status code {0} without an ApiExplorer thing for it.",
+                "Usage",
+                DiagnosticSeverity.Warning,
+                isEnabledByDefault: true);
+
+        public static readonly DiagnosticDescriptor MVC7005_ApiActionIsMissingResponse =
+            new DiagnosticDescriptor(
+                "MVC7005",
+                "API action claims to return an action result with status code '{0}' but no result was found that matches this constraint.",
+                "API action claims to return an action result with status code '{0}' but no result was found that matches this constraint.",
+                "Usage",
+                DiagnosticSeverity.Info,
+                isEnabledByDefault: true);
     }
 }

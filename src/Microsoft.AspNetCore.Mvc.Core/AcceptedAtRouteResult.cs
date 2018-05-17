@@ -8,12 +8,14 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Microsoft.AspNetCore.Mvc
 {
     /// <summary>
     /// An <see cref="ActionResult"/> that returns a Accepted (202) response with a Location header.
     /// </summary>
+    [StatusCode(StatusCodes.Status202Accepted)]
     public class AcceptedAtRouteResult : ObjectResult
     {
         /// <summary>

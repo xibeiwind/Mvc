@@ -10,33 +10,39 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
     {
         public static bool HasAttribute(this ITypeSymbol typeSymbol, ITypeSymbol attribute, bool inherit)
         {
-            while (typeSymbol != null)
+            return typeSymbol.GetAttributeData(attribute, inherit) != null;
+        }
+
+        public static AttributeData GetAttributeData(this ITypeSymbol typeSymbol, ITypeSymbol attribute, bool inherit)
+        {
+            do
             {
-                if (typeSymbol.HasAttribute(attribute))
+                var attributeData = typeSymbol.GetAttributeData(attribute);
+                if (attributeData != null)
                 {
-                    return true;
+                    return attributeData;
                 }
 
                 typeSymbol = typeSymbol.BaseType;
-            }
+            } while (inherit && typeSymbol != null);
 
-            return false;
+            return null;
         }
 
         public static bool HasAttribute(this ISymbol symbol, ITypeSymbol attribute)
-        {
-            Debug.Assert(symbol != null);
-            Debug.Assert(attribute != null);
+            => symbol.GetAttributeData(attribute) != null;
 
+        public static AttributeData GetAttributeData(this ISymbol symbol, ITypeSymbol attribute)
+        {
             foreach (var declaredAttribute in symbol.GetAttributes())
             {
                 if (declaredAttribute.AttributeClass == attribute)
                 {
-                    return true;
+                    return declaredAttribute;
                 }
             }
 
-            return false;
+            return null;
         }
 
         public static bool IsAssignableFrom(this ITypeSymbol source, INamedTypeSymbol target)

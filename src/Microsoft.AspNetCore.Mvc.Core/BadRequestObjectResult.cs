@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Microsoft.AspNetCore.Mvc
@@ -10,6 +11,7 @@ namespace Microsoft.AspNetCore.Mvc
     /// <summary>
     /// An <see cref="ObjectResult"/> that when executed will produce a Bad Request (400) response.
     /// </summary>
+    [StatusCode(StatusCodes.Status400BadRequest)]
     public class BadRequestObjectResult : ObjectResult
     {
         /// <summary>

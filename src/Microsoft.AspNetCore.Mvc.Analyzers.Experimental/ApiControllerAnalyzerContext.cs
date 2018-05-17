@@ -45,6 +45,11 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
         public INamedTypeSymbol _nonActionAttribute;
         public INamedTypeSymbol NonActionAttribute => GetType(TypeNames.NonActionAttribute, ref _nonActionAttribute);
 
+        public INamedTypeSymbol _iApiResponseMetadataProvider;
+        public INamedTypeSymbol IApiResponseMetadataProvider => GetType(TypeNames.IApiResponseMetadataProvider, ref _iApiResponseMetadataProvider);
+
+        public INamedTypeSymbol _statusCodeAttribute;
+        public INamedTypeSymbol StatusCodeAttribute => GetType(TypeNames.StatusCodeAttribute, ref _statusCodeAttribute);
 
         private INamedTypeSymbol GetType(string name, ref INamedTypeSymbol cache) =>
             cache = cache ?? Context.Compilation.GetTypeByMetadataName(name);
