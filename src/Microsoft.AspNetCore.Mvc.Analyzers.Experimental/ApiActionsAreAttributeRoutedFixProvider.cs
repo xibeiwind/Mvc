@@ -120,7 +120,7 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
             }
         }
 
-        private static string GetRoute(ITypeSymbol fromRouteAttribute, IMethodSymbol method)
+        private static string GetRoute(INamedTypeSymbol fromRouteAttribute, IMethodSymbol method)
         {
             StringBuilder routeNameBuilder = null;
 

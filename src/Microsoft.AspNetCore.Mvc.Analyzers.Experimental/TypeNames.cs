@@ -38,5 +38,7 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
         public const string IApiResponseMetadataProvider = "Microsoft.AspNetCore.Mvc.ApiExplorer.IApiResponseMetadataProvider";
 
         public const string StatusCodeAttribute = "Microsoft.AspNetCore.Mvc.ApiExplorer.StatusCodeAttribute";
+
+        public const string ProducesDefaultResponseAttribute = "Microsoft.AspNetCore.Mvc.ApiExplorer.ProducesDefaultResponse";
     }
 }

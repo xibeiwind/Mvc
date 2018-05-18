@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
 
                 foreach (var attribute in method.GetAttributes())
                 {
-                    if (attribute.AttributeClass.IsAssignableFrom(analyzerContext.RouteAttribute))
+                    if (analyzerContext.RouteAttribute.IsAssignableFrom(attribute.AttributeClass))
                     {
                         return;
                     }

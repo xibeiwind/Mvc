@@ -51,6 +51,9 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
         public INamedTypeSymbol _statusCodeAttribute;
         public INamedTypeSymbol StatusCodeAttribute => GetType(TypeNames.StatusCodeAttribute, ref _statusCodeAttribute);
 
+        public INamedTypeSymbol _producesDefaultResponseAttribute;
+        public INamedTypeSymbol ProducesDefaultResponseAttribute => GetType(TypeNames.ProducesDefaultResponseAttribute, ref _producesDefaultResponseAttribute);
+
         private INamedTypeSymbol GetType(string name, ref INamedTypeSymbol cache) =>
             cache = cache ?? Context.Compilation.GetTypeByMetadataName(name);
 

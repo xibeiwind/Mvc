@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 
@@ -8,12 +9,12 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
 {
     internal static class CodeAnalysisExtensions
     {
-        public static bool HasAttribute(this ITypeSymbol typeSymbol, ITypeSymbol attribute, bool inherit)
+        public static bool HasAttribute(this ITypeSymbol typeSymbol, INamedTypeSymbol attribute, bool inherit)
         {
             return typeSymbol.GetAttributeData(attribute, inherit) != null;
         }
 
-        public static AttributeData GetAttributeData(this ITypeSymbol typeSymbol, ITypeSymbol attribute, bool inherit)
+        public static AttributeData GetAttributeData(this ITypeSymbol typeSymbol, INamedTypeSymbol attribute, bool inherit)
         {
             do
             {
@@ -29,14 +30,25 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
             return null;
         }
 
-        public static bool HasAttribute(this ISymbol symbol, ITypeSymbol attribute)
+        public static bool HasAttribute(this ISymbol symbol, INamedTypeSymbol attribute)
             => symbol.GetAttributeData(attribute) != null;
 
-        public static AttributeData GetAttributeData(this ISymbol symbol, ITypeSymbol attribute)
+        public static IEnumerable<AttributeData> GetAttributeDataItems(this ISymbol symbol, INamedTypeSymbol attributeType)
         {
             foreach (var declaredAttribute in symbol.GetAttributes())
             {
-                if (declaredAttribute.AttributeClass == attribute)
+                if (attributeType.IsAssignableFrom(declaredAttribute.AttributeClass))
+                {
+                    yield return declaredAttribute;
+                }
+            }
+        }
+
+        public static AttributeData GetAttributeData(this ISymbol symbol, INamedTypeSymbol attributeType)
+        {
+            foreach (var declaredAttribute in symbol.GetAttributes())
+            {
+                if (attributeType.IsAssignableFrom(declaredAttribute.AttributeClass))
                 {
                     return declaredAttribute;
                 }
@@ -45,7 +57,7 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
             return null;
         }
 
-        public static bool IsAssignableFrom(this ITypeSymbol source, INamedTypeSymbol target)
+        public static bool IsAssignableFrom(this INamedTypeSymbol target, ITypeSymbol source)
         {
             Debug.Assert(source != null);
             Debug.Assert(target != null);

@@ -7,6 +7,7 @@
 
   <PropertyGroup>
     <RazorCompileOnBuild>true</RazorCompileOnBuild>
+   
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="$(MicrosoftExtensionsLoggingDebugPackageVersion)" />
     <PackageReference Include="Microsoft.NET.Sdk.Razor" Version="$(MicrosoftNETSdkRazorPackageVersion)" PrivateAssets="All" />
 
-    <PackageReference Include="NSwag.AspNetCore" Version="11.17.5" />
+    <PackageReference Include="NSwag.AspNetCore" Version="$(x)" />
   </ItemGroup>
 
 </Project>

@@ -42,17 +42,9 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
                     return;
                 }
 
-                var declaredReturnType = method.ReturnType;
-                var namedReturnType = (INamedTypeSymbol)method.ReturnType;
-                var isTaskOActionResult = false;
-                if (namedReturnType.ConstructedFrom?.IsAssignableFrom(analyzerContext.SystemThreadingTaskOfT) ?? false)
-                {
-                    // Unwrap Task<T>.
-                    isTaskOActionResult = true;
-                    declaredReturnType = namedReturnType.TypeArguments[0];
-                }
+                var (declaredReturnType, isTaskOfActionResult) = AnalyzerUtils.UnwrapReturnType(analyzerContext, method);
 
-                if (!declaredReturnType.IsAssignableFrom(analyzerContext.IActionResult))
+                if (!analyzerContext.IActionResult.IsAssignableFrom(declaredReturnType))
                 {
                     // Method signature does not look like IActionResult MyAction or SomeAwaitable<IActionResult>.
                     // Nothing to do here.
@@ -69,7 +61,7 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
                     }
 
                     ImmutableDictionary<string, string> properties = null;
-                    if (returnType.Type.IsAssignableFrom(analyzerContext.ObjectResult))
+                    if (analyzerContext.ObjectResult.IsAssignableFrom(returnType.Type))
                     {
                         // Check if the method signature looks like "return Ok(userModelInstance)". If so, we can infer the type of userModelInstance
                         if (returnStatement.Expression is InvocationExpressionSyntax invocation &&
@@ -77,7 +69,7 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
                         {
                             var typeInfo = context.SemanticModel.GetTypeInfo(invocation.ArgumentList.Arguments[0].Expression);
                             var desiredReturnType = analyzerContext.ActionResultOfT.Construct(typeInfo.Type);
-                            if (isTaskOActionResult)
+                            if (isTaskOfActionResult)
                             {
                                 desiredReturnType = analyzerContext.SystemThreadingTaskOfT.Construct(desiredReturnType);
                             }
