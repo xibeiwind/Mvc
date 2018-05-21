@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.AspNetCore.Mvc.Analyzers.Experimental
+namespace Microsoft.AspNetCore.Mvc.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class ApiConventionMissingResponseTypeAnalyzer : ApiControllerAnalyzerBase
@@ -21,7 +20,10 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers.Experimental
         {
         }
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.MVC7004_ApiActionIsMissingMetadata, DiagnosticDescriptors.MVC7005_ApiActionIsMissingResponse);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+            DiagnosticDescriptors.MVC7004_ApiActionIsMissingMetadata,
+            DiagnosticDescriptors.MVC7005_ApiActionIsMissingResponse,
+            DiagnosticDescriptors.MVC7006_ApiActionIsMissingProducesDefaultResponseAttribute);
 
         protected override void InitializeWorker(ApiControllerAnalyzerContext analyzerContext)
         {
@@ -58,8 +60,14 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers.Experimental
                 foreach (var returnStatement in methodSyntax.DescendantNodes().OfType<ReturnStatementSyntax>())
                 {
                     var returnType = context.SemanticModel.GetTypeInfo(returnStatement.Expression, context.CancellationToken).Type;
-                    if ((returnType == method.ReturnType || returnType == declaredReturnType) && !expectedStatusCodes.Contains(0))
+                    if ((returnType == method.ReturnType || returnType == declaredReturnType))
                     {
+                        actualStatusCodes.Add(0);
+                        if (expectedStatusCodes.Contains(0))
+                        {
+                            continue;
+                        }
+
                         // Verify there's a ProducesDefaultResponseAttribute.
                         var additionalLocations = conventionMethod == null ? Enumerable.Empty<Location>() : new[] { conventionMethod.Locations[0] };
                         context.ReportDiagnostic(Diagnostic.Create(
@@ -67,12 +75,6 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers.Experimental
                             returnStatement.GetLocation(),
                             additionalLocations,
                             returnType));
-                    }
-                    
-                    if (!analyzerContext.IActionResult.IsAssignableFrom(returnType))
-                    {
-                        // Returning an object. Verify we have a DefaultResponse
-
                     }
 
                     var statusCodeAttribute = returnType.GetAttributeData(analyzerContext.StatusCodeAttribute, inherit: true);
@@ -114,13 +116,21 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers.Experimental
             var attribute = method.ContainingType.GetAttributeData(analyzerContext.ApiControllerAttribute);
             Debug.Assert(attribute != null);
             conventionMethod = null;
-            var conventionProperty = attribute.NamedArguments.First(f => f.Key == "ConventionType").Value;
-            if (conventionProperty.Kind != TypedConstantKind.Type || conventionProperty.Value == null)
+
+            ITypeSymbol conventionType;
+            if (attribute.ConstructorArguments.Length == 0)
             {
-                return null;
+                conventionType = analyzerContext.DefaultApiConventions;
+            }
+            else
+            {
+                if (attribute.ConstructorArguments[0].Kind != TypedConstantKind.Type || attribute.ConstructorArguments[0].Value == null)
+                {
+                    return null;
+                }
+                conventionType = (ITypeSymbol)attribute.ConstructorArguments[0].Value;
             }
 
-            var conventionType = (ITypeSymbol)conventionProperty.Value;
             conventionMethod = conventionType.GetMembers(method.Name)
                 .OfType<IMethodSymbol>()
                 .FirstOrDefault(methodInConvention =>
@@ -135,8 +145,11 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers.Experimental
                         var parameter = method.Parameters[i];
                         var parameterInConvention = methodInConvention.Parameters[i];
 
-                        if (parameter.Type != parameterInConvention.Type ||
-                            parameter.Name != parameterInConvention.Name)
+                        if (parameterInConvention.Type.TypeKind == TypeKind.TypeParameter)
+                        {
+                            continue;
+                        }
+                        else if (parameter.Type != parameterInConvention.Type)
                         {
                             return false;
                         }
@@ -144,6 +157,11 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers.Experimental
 
                     return true;
                 });
+
+            if (conventionMethod == null)
+            {
+                return null;
+            }
 
             return GetDeclaredStatusCodes(analyzerContext, conventionMethod);
         }

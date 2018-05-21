@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Internal;
 
 namespace Microsoft.AspNetCore.Mvc
@@ -14,6 +15,16 @@ namespace Microsoft.AspNetCore.Mvc
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class ApiControllerAttribute : ControllerAttribute, IApiBehaviorMetadata, IApiBehaviorConventionProviderType
     {
-        public Type ConventionType { get; set; }
+        public ApiControllerAttribute()
+            : this(typeof(DefaultApiConventions))
+        {
+        }
+
+        public ApiControllerAttribute(Type conventionType)
+        {
+            ConventionType = conventionType;
+        }
+
+        public Type ConventionType { get; }
     }
 }

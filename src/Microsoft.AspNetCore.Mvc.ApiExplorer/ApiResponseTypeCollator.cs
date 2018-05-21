@@ -62,14 +62,40 @@ namespace Microsoft.AspNetCore.Mvc.ApiExplorer
 
         private MethodInfo GetConventionMethod(MethodInfo methodInfo, Type conventions)
         {
-            var method = conventions.GetMethod(
-                methodInfo.Name,
-                BindingFlags.Public | BindingFlags.Instance,
-                binder: null,
-                methodInfo.GetParameters().Select(p => p.ParameterType).ToArray(),
-                modifiers: null);
+            var methodParameters = methodInfo.GetParameters();
+            var conventionMethods = conventions.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+            return conventionMethods.FirstOrDefault(conventionMethod =>
+            {
+                // methodInfo = PostUser, convention = Post
+                if (!conventionMethod.Name.StartsWith(methodInfo.Name))
+                {
+                    return false;
+                }
 
-            return method;
+                var conventionMethodParameters = conventionMethod.GetParameters();
+                if (conventionMethodParameters.Length != methodParameters.Length)
+                {
+                    return false;
+                }
+
+                for (var i = 0; i < conventionMethodParameters.Length; i++)
+                {
+                    if (conventionMethodParameters[i].ParameterType.IsGenericTypeDefinition)
+                    {
+                        // Use TModel as wildcard
+                        continue;
+                    }
+                    else if (methodParameters[i].ParameterType == conventionMethodParameters[i].ParameterType)
+                    {
+                        if (methodParameters[i].Name != conventionMethodParameters[i].Name)
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            });
         }
 
         protected virtual IApiResponseMetadataProvider[] GetResponseMetadataAttributes(ControllerActionDescriptor action)
@@ -112,7 +138,7 @@ namespace Microsoft.AspNetCore.Mvc.ApiExplorer
                     {
                         objectTypes[metadataAttribute.StatusCode] = metadataAttribute.Type;
                     }
-                    else if (metadataAttribute is ProducesDefaultResponseAttribute)
+                    else if (metadataAttribute is ProducesDefaultResponseAttribute && type != null)
                     {
                         objectTypes[metadataAttribute.StatusCode] = type;
                     }
@@ -134,7 +160,7 @@ namespace Microsoft.AspNetCore.Mvc.ApiExplorer
 
             foreach (var objectType in objectTypes)
             {
-                if (objectType.Value == typeof(void))
+                if (objectType.Value == null || objectType.Value == typeof(void))
                 {
                     results.Add(new ApiResponseType()
                     {

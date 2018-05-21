@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace MvcSandbox.Controllers
 {
-    [ApiController(ConventionType = typeof(DefaultConventions))]
+    [ApiController]
     [Route("[controller]/[action]")]
     public class PersonController : ControllerBase
     {
@@ -24,28 +21,21 @@ namespace MvcSandbox.Controllers
         {
             await Task.Delay(0);
 
-            var persons = DbContext.Persons.Where(x => x.IsCool);
-            return persons.ToList();
+            return Enumerable.Empty<Person>().ToList();
         }
 
-        private class DbContext
+        [HttpPost]
+        public async Task<ActionResult> Post(Person person)
         {
-            public static ICollection<Person> Persons { get; }
+            await Task.Delay(0);
+
+            if (person.IsCool)
+            {
+                return UnprocessableEntity();
+            }
+
+            return Ok();
         }
-    }
-
-    public abstract class DefaultConventions
-    {
-        [ProducesDefaultResponse]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public abstract Task<ActionResult<TModel>> Get<TModel>(int id);
-
-        [ProducesDefaultResponse]
-        public abstract Task<ActionResult<IEnumerable<TModel>>> Get<TModel>();
-
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-        public abstract Task<ActionResult<TModel>> Post<TModel>(int id, TModel model);
     }
 
     public class Person

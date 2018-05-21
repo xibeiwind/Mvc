@@ -7,18 +7,12 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
         public static (ITypeSymbol returnType, bool isTaskOActionResult) UnwrapReturnType(ApiControllerAnalyzerContext analyzerContext, IMethodSymbol method)
         {
             var returnType = method.ReturnType;
-            //if (returnType is INamedTypeSymbol namedReturnType && namedReturnType.ConstructedFrom != null && analyzerContext.SystemThreadingTaskOfT.IsAssignableFrom(namedReturnType.ConstructedFrom))
-            //{
-            //    // Unwrap Task<T>.
-            //    returnType = namedReturnType.TypeArguments[0];
-            //}
+            returnType = UnwrapType(returnType, analyzerContext.SystemThreadingTaskOfT);
+            var isTaskOfActionResult = returnType != method.ReturnType;
 
-            //if (returnType is INamedTypeSymbol namedReturnType && namedReturnType.ConstructedFrom != null && analyzerContext.SystemThreadingTaskOfT.IsAssignableFrom(namedReturnType.ConstructedFrom))
-            //{
+            returnType = UnwrapType(returnType, analyzerContext.ActionResultOfT);
 
-            //}
-
-                return (returnType, returnType == method.ReturnType);
+            return (returnType, isTaskOfActionResult);
 
             ITypeSymbol UnwrapType(ITypeSymbol symbolToUnwrap, INamedTypeSymbol wrappingType)
             {
@@ -28,6 +22,8 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
                 {
                     return namedReturnType.TypeArguments[0];
                 }
+
+                return symbolToUnwrap;
             }
         }
     }

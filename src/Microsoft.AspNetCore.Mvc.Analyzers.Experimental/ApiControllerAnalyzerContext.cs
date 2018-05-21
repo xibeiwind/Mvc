@@ -1,7 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Linq;
+using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -39,23 +39,34 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
         private INamedTypeSymbol _iActionResult;
         public INamedTypeSymbol IActionResult => GetType(TypeNames.IActionResult, ref _iActionResult);
 
-        public INamedTypeSymbol _modelState;
+        private INamedTypeSymbol _modelState;
         public INamedTypeSymbol ModelStateDictionary => GetType(TypeNames.ModelStateDictionary, ref _modelState);
 
-        public INamedTypeSymbol _nonActionAttribute;
+        private INamedTypeSymbol _nonActionAttribute;
         public INamedTypeSymbol NonActionAttribute => GetType(TypeNames.NonActionAttribute, ref _nonActionAttribute);
 
-        public INamedTypeSymbol _iApiResponseMetadataProvider;
+        private INamedTypeSymbol _iApiResponseMetadataProvider;
         public INamedTypeSymbol IApiResponseMetadataProvider => GetType(TypeNames.IApiResponseMetadataProvider, ref _iApiResponseMetadataProvider);
 
-        public INamedTypeSymbol _statusCodeAttribute;
+        private INamedTypeSymbol _statusCodeAttribute;
         public INamedTypeSymbol StatusCodeAttribute => GetType(TypeNames.StatusCodeAttribute, ref _statusCodeAttribute);
 
-        public INamedTypeSymbol _producesDefaultResponseAttribute;
+        private INamedTypeSymbol _producesDefaultResponseAttribute;
         public INamedTypeSymbol ProducesDefaultResponseAttribute => GetType(TypeNames.ProducesDefaultResponseAttribute, ref _producesDefaultResponseAttribute);
 
-        private INamedTypeSymbol GetType(string name, ref INamedTypeSymbol cache) =>
+        private INamedTypeSymbol _defaultApiConventions;
+        public INamedTypeSymbol DefaultApiConventions => GetType(TypeNames.DefaultApiConventions, ref _defaultApiConventions);
+
+        private INamedTypeSymbol GetType(string name, ref INamedTypeSymbol cache)
+        {
             cache = cache ?? Context.Compilation.GetTypeByMetadataName(name);
+            if (cache == null)
+            {
+                throw new ArgumentException($"Type {name} could not be found.");
+            }
+
+            return cache;
+        }
 
         public bool IsApiAction(IMethodSymbol method)
         {

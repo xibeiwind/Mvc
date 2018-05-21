@@ -5,14 +5,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MvcSandbox.Controllers
 {
+    [ApiController]
+    [Route("[controller]/[action]")]
     public class HomeController : Controller
     {
-        [ModelBinder]
-        public string Id { get; set; }
-
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index([FromQuery]Foo x)
         {
             return View();
         }
     }
+
+    public class Foo
+    {
+        public int Id { get; set; }
+    }
+
 }

@@ -1,8 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Formatters;
 
-namespace Microsoft.AspNetCore.Mvc.ApiExplorer
+namespace Microsoft.AspNetCore.Mvc
 {
     public class ProducesDefaultResponseAttribute : Attribute, IApiResponseMetadataProvider
     {

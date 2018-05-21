@@ -39,6 +39,10 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
 
         public const string StatusCodeAttribute = "Microsoft.AspNetCore.Mvc.ApiExplorer.StatusCodeAttribute";
 
-        public const string ProducesDefaultResponseAttribute = "Microsoft.AspNetCore.Mvc.ApiExplorer.ProducesDefaultResponse";
+        public const string ProducesDefaultResponseAttribute = "Microsoft.AspNetCore.Mvc.ProducesDefaultResponseAttribute";
+
+        public const string ProducesResponseTypeAttribute = "Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute";
+
+        public const string DefaultApiConventions = "Microsoft.AspNetCore.Mvc.ApiExplorer.DefaultApiConventions";
     }
 }

@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+
+    <Compile Include="..\Microsoft.AspNetCore.Mvc.Analyzers.Test\Infrastructure\*.cs" Link="Infrastructure\%(FileName).cs" />
   </ItemGroup>
 
   <ItemGroup>

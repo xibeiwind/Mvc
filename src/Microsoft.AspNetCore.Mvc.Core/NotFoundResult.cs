@@ -10,6 +10,7 @@ namespace Microsoft.AspNetCore.Mvc
     /// Represents an <see cref="StatusCodeResult"/> that when
     /// executed will produce a Not Found (404) response.
     /// </summary>
+    [StatusCode(StatusCodes.Status404NotFound)]
     public class NotFoundResult : StatusCodeResult
     {
         /// <summary>
