@@ -85,17 +85,34 @@ namespace Microsoft.AspNetCore.Mvc.ApiExplorer
                         // Use TModel as wildcard
                         continue;
                     }
-                    else if (methodParameters[i].ParameterType == conventionMethodParameters[i].ParameterType)
+                    else if (IsNameMatch(methodParameters[i].Name, conventionMethodParameters[i].Name))
                     {
-                        if (methodParameters[i].Name != conventionMethodParameters[i].Name)
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
 
                 return true;
             });
+
+            bool IsNameMatch(string name, string conventionName)
+            {
+                // name = id, conventionName = id
+                if (string.Equals(name, conventionName, StringComparison.Ordinal))
+                {
+                    return true;
+                }
+
+                // name = personId, conventionName = id
+                if (name.Length > conventionName.Length && 
+                    char.IsLower(name[name.Length - conventionName.Length]) &&
+                    )
+                {
+                    for (var i = 0; i < conventionName.Length; i++)
+                    {
+                        if (i == 0)
+                    }
+                }
+            }
         }
 
         protected virtual IApiResponseMetadataProvider[] GetResponseMetadataAttributes(ControllerActionDescriptor action)
