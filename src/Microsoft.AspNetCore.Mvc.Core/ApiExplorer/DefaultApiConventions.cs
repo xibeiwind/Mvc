@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.Mvc.ApiExplorer
         [ProducesDefaultResponse]
         public abstract void Get<TModel>();
 
-        [ProducesDefaultResponse(StatusCode = StatusCodes.Status201Created)]
+        [ProducesDefaultResponse(StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         public abstract void Post<TModel>(TModel model);
 

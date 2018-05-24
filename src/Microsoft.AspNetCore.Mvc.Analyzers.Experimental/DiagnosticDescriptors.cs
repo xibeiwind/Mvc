@@ -61,13 +61,22 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
                 DiagnosticSeverity.Info,
                 isEnabledByDefault: true);
 
-        public static readonly DiagnosticDescriptor MVC7006_ApiActionIsMissingProducesDefaultResponseAttribute =
+        public static readonly DiagnosticDescriptor MVC7006_ApiActionIsMissingProducesAttribute =
             new DiagnosticDescriptor(
                 "MVC7006",
-                "API action returns value '{0}' but does not specify a ProducesDefaultResponseAttribute.",
-                "API action returns value '{0}' but does not specify a ProducesDefaultResponseAttribute.",
+                "API action returns value '{0}' but does not specify a ProducesAttribute.",
+                "API action returns value '{0}' but does not specify a ProducesAttribute.",
                 "Usage",
                 DiagnosticSeverity.Warning,
+                isEnabledByDefault: true);
+
+        public static readonly DiagnosticDescriptor MVC7007_ApiActionIsMissingDefaultResponse =
+            new DiagnosticDescriptor(
+                "MVC7005",
+                "API action claims to return default response but no return type '{0}' was found.",
+                "API action claims to return an action result with status code '{0}' but no result was found that matches this constraint.",
+                "Usage",
+                DiagnosticSeverity.Info,
                 isEnabledByDefault: true);
     }
 }

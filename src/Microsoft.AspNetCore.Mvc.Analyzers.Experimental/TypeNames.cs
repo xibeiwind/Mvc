@@ -15,6 +15,8 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
 
         public const string ActionResultOfT = "Microsoft.AspNetCore.Mvc.ActionResult`1";
 
+        public const string SystemType = "System.Type";
+
         public const string Task = "System.Threading.Tasks.Task";
 
         public const string TaskOfT = "System.Threading.Tasks.Task`1";
@@ -42,6 +44,8 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
         public const string ProducesDefaultResponseAttribute = "Microsoft.AspNetCore.Mvc.ProducesDefaultResponseAttribute";
 
         public const string ProducesResponseTypeAttribute = "Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute";
+
+        public const string ProducesAttribute = "Microsoft.AspNetCore.Mvc.ProducesAttribute";
 
         public const string DefaultApiConventions = "Microsoft.AspNetCore.Mvc.ApiExplorer.DefaultApiConventions";
     }

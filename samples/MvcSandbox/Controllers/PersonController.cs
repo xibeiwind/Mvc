@@ -9,8 +9,8 @@ namespace MvcSandbox.Controllers
     [Route("[controller]/[action]")]
     public class PersonController : ControllerBase
     {
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Person>> Get(int id)
+        [HttpGet("{personId}")]
+        public async Task<ActionResult<Person>> Get(int personId)
         {
             await Task.Delay(0);
             return new Person();

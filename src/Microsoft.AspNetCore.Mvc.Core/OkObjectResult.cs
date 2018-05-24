@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Microsoft.AspNetCore.Mvc
 {
@@ -9,6 +10,7 @@ namespace Microsoft.AspNetCore.Mvc
     /// An <see cref="ObjectResult"/> that when executed performs content negotiation, formats the entity body, and
     /// will produce a <see cref="StatusCodes.Status200OK"/> response if negotiation and formatting succeed.
     /// </summary>
+    [StatusCode(200)]
     public class OkObjectResult : ObjectResult
     {
         /// <summary>

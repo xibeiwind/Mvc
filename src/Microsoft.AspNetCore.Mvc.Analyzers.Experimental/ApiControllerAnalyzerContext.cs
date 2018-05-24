@@ -57,6 +57,9 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
         private INamedTypeSymbol _defaultApiConventions;
         public INamedTypeSymbol DefaultApiConventions => GetType(TypeNames.DefaultApiConventions, ref _defaultApiConventions);
 
+        private INamedTypeSymbol _systemType;
+        public INamedTypeSymbol SystemType => GetType(TypeNames.SystemType, ref _systemType);
+
         private INamedTypeSymbol GetType(string name, ref INamedTypeSymbol cache)
         {
             cache = cache ?? Context.Compilation.GetTypeByMetadataName(name);

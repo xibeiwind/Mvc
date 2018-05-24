@@ -67,7 +67,7 @@ namespace Microsoft.AspNetCore.Mvc.ApiExplorer
             return conventionMethods.FirstOrDefault(conventionMethod =>
             {
                 // methodInfo = PostUser, convention = Post
-                if (!conventionMethod.Name.StartsWith(methodInfo.Name))
+                if (!methodInfo.Name.StartsWith(conventionMethod.Name, StringComparison.Ordinal))
                 {
                     return false;
                 }
@@ -80,12 +80,12 @@ namespace Microsoft.AspNetCore.Mvc.ApiExplorer
 
                 for (var i = 0; i < conventionMethodParameters.Length; i++)
                 {
-                    if (conventionMethodParameters[i].ParameterType.IsGenericTypeDefinition)
+                    if (conventionMethodParameters[i].ParameterType.IsGenericParameter)
                     {
                         // Use TModel as wildcard
                         continue;
                     }
-                    else if (IsNameMatch(methodParameters[i].Name, conventionMethodParameters[i].Name))
+                    else if (!IsNameMatch(methodParameters[i].Name, conventionMethodParameters[i].Name))
                     {
                         return false;
                     }
@@ -96,22 +96,36 @@ namespace Microsoft.AspNetCore.Mvc.ApiExplorer
 
             bool IsNameMatch(string name, string conventionName)
             {
+                // Leading underscores could be used to allow multiple parameter names with the same suffix e.g. GetPersonAddress(int personId, int addressId)
+                // A common convention that allows targeting these category of methods would look like Get(int id, int _id)
+                conventionName = conventionName.Trim('_');
+
                 // name = id, conventionName = id
                 if (string.Equals(name, conventionName, StringComparison.Ordinal))
                 {
                     return true;
                 }
 
-                // name = personId, conventionName = id
-                if (name.Length > conventionName.Length && 
-                    char.IsLower(name[name.Length - conventionName.Length]) &&
-                    )
+                if (name.Length <= conventionName.Length)
                 {
-                    for (var i = 0; i < conventionName.Length; i++)
-                    {
-                        if (i == 0)
-                    }
+                    return false;
                 }
+
+                // name = personId, conventionName = id
+                var index = name.Length - conventionName.Length - 1;
+                if (!char.IsLower(name[index]))
+                {
+                    return false;
+                }
+
+                index++;
+                if (name[index] != char.ToUpper(conventionName[0]))
+                {
+                    return false;
+                }
+
+                index++;
+                return string.Compare(name, index, conventionName, 1, conventionName.Length - 1, StringComparison.Ordinal) == 0;
             }
         }
 

@@ -17,18 +17,18 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
 {
     [ExportCodeFixProvider(LanguageNames.CSharp)]
     [Shared]
-    public class ApiConventionMissingResponseTypeCodeFixProvider : CodeFixProvider
+    public class ApiConventionMissingDefaultResponseCodeFixProvider : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds =>
-            ImmutableArray.Create(DiagnosticDescriptors.MVC7004_ApiActionIsMissingMetadata.Id);
+            ImmutableArray.Create(DiagnosticDescriptors.MVC7006_ApiActionIsMissingProducesAttribute.Id);
 
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var diagnostic = context.Diagnostics[0];
-            var statusCode = diagnostic.Properties["StatusCode"];
-            var title = $"Add a ProducesResponseAttribute";
+            var producedType = diagnostic.Properties["ProducedType"];
+            var title = $"Add ProducesResponseAttribute({producedType}) to method.";
             var rootNode = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
             context.RegisterCodeFix(
@@ -42,10 +42,12 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
             {
                 var editor = await DocumentEditor.CreateAsync(context.Document, cancellationToken).ConfigureAwait(false);
                 var returnStatement = (ReturnStatementSyntax)rootNode.FindNode(context.Span);
+
                 var methodDeclaration = returnStatement.FirstAncestorOrSelf<MethodDeclarationSyntax>();
 
+                var returnType = editor.SemanticModel.GetTypeInfo(returnStatement.Expression).Type;
                 var compilation = editor.SemanticModel.Compilation;
-                var producesResponseTypeAttribute = compilation.GetTypeByMetadataName(TypeNames.ProducesResponseTypeAttribute);
+                var producesResponseTypeAttribute = compilation.GetTypeByMetadataName(TypeNames.ProducesAttribute);
                 var attributeName = producesResponseTypeAttribute.ToMinimalDisplayString(editor.SemanticModel, methodDeclaration.SpanStart);
                 if (attributeName.EndsWith("Attribute", StringComparison.Ordinal))
                 {
@@ -56,7 +58,7 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers
                     SyntaxFactory.ParseName(attributeName),
                     SyntaxFactory.AttributeArgumentList().AddArguments(
                         SyntaxFactory.AttributeArgument(
-                            SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(int.Parse(statusCode))))));
+                            SyntaxFactory.TypeOfExpression(SyntaxFactory.ParseTypeName(returnType.Name)))));
 
                 editor.AddAttribute(methodDeclaration, attribute);
                 return editor.GetChangedDocument();

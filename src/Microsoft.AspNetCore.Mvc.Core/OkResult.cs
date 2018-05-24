@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Microsoft.AspNetCore.Mvc
 {
@@ -9,6 +10,7 @@ namespace Microsoft.AspNetCore.Mvc
     /// An <see cref="StatusCodeResult"/> that when executed will produce an empty
     /// <see cref="StatusCodes.Status200OK"/> response.
     /// </summary>
+    [StatusCode(200)]
     public class OkResult : StatusCodeResult
     {
         /// <summary>

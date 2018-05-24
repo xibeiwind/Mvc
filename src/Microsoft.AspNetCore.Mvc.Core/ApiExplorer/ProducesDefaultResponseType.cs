@@ -7,9 +7,19 @@ namespace Microsoft.AspNetCore.Mvc
 {
     public class ProducesDefaultResponseAttribute : Attribute, IApiResponseMetadataProvider
     {
-        public Type Type => null;
+        public ProducesDefaultResponseAttribute(int statusCode)
+        {
 
-        public int StatusCode { get; set; } = StatusCodes.Status200OK;
+        }
+
+        public ProducesDefaultResponseAttribute() : this(StatusCodes.Status200OK)
+        {
+            
+        }
+
+        Type IApiResponseMetadataProvider.Type => null;
+
+        int IApiResponseMetadataProvider.StatusCode { get; }
 
         void IApiResponseMetadataProvider.SetContentTypes(MediaTypeCollection contentTypes)
         {
