@@ -13,13 +13,17 @@ namespace ErrorPageMiddlewareWebSite
         // Set up application services
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDispatcher();
+
             services.AddMvc();
         }
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseDispatcher();
             app.UseDeveloperExceptionPage();
-            app.UseMvc();
+
+            app.UseEndpoint();
         }
 
         public static void Main(string[] args)

@@ -13,6 +13,8 @@ namespace RazorPagesWebSite
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDispatcher();
+
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options => options.LoginPath = "/Login");
             services.AddMvc()
                 .AddMvcLocalization()
@@ -30,6 +32,8 @@ namespace RazorPagesWebSite
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseDispatcher();
+
             app.UseAuthentication();
 
             app.UseStaticFiles();
@@ -46,7 +50,7 @@ namespace RazorPagesWebSite
                 SupportedUICultures = supportedCultures
             });
 
-            app.UseMvc();
+            app.UseEndpoint();
         }
     }
 }

@@ -13,6 +13,8 @@ namespace VersioningWebSite
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDispatcher();
+
             // Add MVC services to the services container
             services.AddMvc();
 
@@ -22,7 +24,14 @@ namespace VersioningWebSite
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseMvcWithDefaultRoute();
+            app.UseDispatcher();
+
+            app.UseMvcWithEndpoint(routes =>
+            {
+                routes.MapEndpoint(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }

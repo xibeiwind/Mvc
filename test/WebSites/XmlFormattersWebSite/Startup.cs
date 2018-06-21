@@ -16,6 +16,8 @@ namespace XmlFormattersWebSite
         // Set up application services
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDispatcher();
+
             // Add MVC services to the services container
             services.AddMvc();
 
@@ -68,9 +70,11 @@ namespace XmlFormattersWebSite
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseMvc(routes =>
+            app.UseDispatcher();
+
+            app.UseMvcWithEndpoint(routes =>
             {
-                routes.MapRoute("ActionAsMethod", "{controller}/{action}",
+                routes.MapEndpoint("ActionAsMethod", "{controller}/{action}",
                     defaults: new { controller = "Home", action = "Index" });
             });
         }

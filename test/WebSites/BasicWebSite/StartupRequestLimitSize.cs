@@ -13,12 +13,16 @@ namespace BasicWebSite
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDispatcher();
+
             services.AddMvc();
             services.ConfigureBaseWebSiteAuthPolicies();
         }
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseDispatcher();
+
             app.UseDeveloperExceptionPage();
 
             app.Use((httpContext, next) =>
@@ -34,7 +38,12 @@ namespace BasicWebSite
                 return next();
             });
 
-            app.UseMvcWithDefaultRoute();
+            app.UseMvcWithEndpoint(routes =>
+            {
+                routes.MapEndpoint(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
 
         private class RequestBodySizeCheckingStream : Stream

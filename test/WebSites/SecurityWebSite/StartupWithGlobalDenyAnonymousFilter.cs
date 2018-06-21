@@ -21,6 +21,8 @@ namespace SecurityWebSite
                     options.LogoutPath = "/Home/Logout";
                 }).AddCookie("Cookie2");
 
+            services.AddDispatcher();
+
             services.AddMvc(o =>
             {
                 o.Filters.Add(new AuthorizeFilter());
@@ -31,9 +33,16 @@ namespace SecurityWebSite
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseDispatcher();
+
             app.UseAuthentication();
 
-            app.UseMvcWithDefaultRoute();
+            app.UseMvcWithEndpoint(routes =>
+            {
+                routes.MapEndpoint(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }

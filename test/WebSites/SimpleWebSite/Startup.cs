@@ -22,11 +22,20 @@ namespace SimpleWebSite
                 .AddAuthorization()
                 .AddFormatterMappings(m => m.SetMediaTypeMappingForFormat("js", new MediaTypeHeaderValue("application/json")))
                 .AddJsonFormatters(j => j.Formatting = Formatting.Indented);
+
+            services.AddDispatcher();
         }
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseMvcWithDefaultRoute();
+            app.UseDispatcher();
+
+            app.UseMvcWithEndpoint(routes =>
+            {
+                routes.MapEndpoint(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
 
         public static void Main(string[] args)
