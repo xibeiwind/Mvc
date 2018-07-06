@@ -94,6 +94,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                             && MatchRouteValue(action, endpointInfo, "Action"))
                         {
                             var newEndpointTemplate = TemplateParser.Parse(endpointInfo.Template);
+                            var matchProcessorReferences = GetMatchProcessorReferences(newEndpointTemplate);
 
                             for (var i = 0; i < newEndpointTemplate.Segments.Count; i++)
                             {
@@ -113,6 +114,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                                         endpointInfo.Name,
                                         subTemplate,
                                         endpointInfo.Defaults,
+                                        matchProcessorReferences,
                                         ++conventionalRouteOrder,
                                         endpointInfo);
                                     _endpoints.Add(subEndpoint);
@@ -138,6 +140,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                                 endpointInfo.Name,
                                 newTemplate,
                                 endpointInfo.Defaults,
+                                matchProcessorReferences,
                                 ++conventionalRouteOrder,
                                 endpointInfo);
                             _endpoints.Add(endpoint);
@@ -146,11 +149,15 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                 }
                 else
                 {
+                    var newEndpointTemplate = TemplateParser.Parse(action.AttributeRouteInfo.Template);
+                    var matchProcessorReferences = GetMatchProcessorReferences(newEndpointTemplate);
+
                     var endpoint = CreateEndpoint(
                         action,
                         action.AttributeRouteInfo.Name,
                         action.AttributeRouteInfo.Template,
                         nonInlineDefaults: null,
+                        matchProcessorReferences,
                         action.AttributeRouteInfo.Order,
                         action.AttributeRouteInfo);
                     _endpoints.Add(endpoint);
@@ -270,6 +277,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             string routeName,
             string template,
             object nonInlineDefaults,
+            List<MatchProcessorReference> matchProcessorReferences,
             int order,
             object source)
         {
@@ -325,6 +333,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                 template,
                 new RouteValueDictionary(nonInlineDefaults),
                 new RouteValueDictionary(action.RouteValues),
+                matchProcessorReferences,
                 order,
                 metadataCollection,
                 action.DisplayName);
@@ -356,6 +365,28 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             {
                 defaults[kvp.Key] = kvp.Value;
             }
+        }
+
+        private List<MatchProcessorReference> GetMatchProcessorReferences(RouteTemplate routeTemplate)
+        {
+            var matchProcessorReferences = new List<MatchProcessorReference>();
+
+            foreach (var parameter in routeTemplate.Parameters)
+            {
+                if (parameter.InlineConstraints != null)
+                {
+                    foreach(var constraint in parameter.InlineConstraints)
+                    {
+                        matchProcessorReferences.Add(
+                            MatchProcessorReference.From(
+                                parameter.Name,
+                                optional: parameter.IsOptional,
+                                constraintText: constraint.Constraint));
+                    }
+                }
+            }
+
+            return matchProcessorReferences;
         }
 
         private IChangeToken GetCompositeChangeToken()
