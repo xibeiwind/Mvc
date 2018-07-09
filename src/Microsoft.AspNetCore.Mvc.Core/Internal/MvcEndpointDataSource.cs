@@ -375,7 +375,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             {
                 if (parameter.InlineConstraints != null)
                 {
-                    foreach(var constraint in parameter.InlineConstraints)
+                    foreach (var constraint in parameter.InlineConstraints)
                     {
                         matchProcessorReferences.Add(
                             MatchProcessorReference.From(
