@@ -44,7 +44,7 @@ namespace MvcSandbox
                 .ConfigureLogging(factory =>
                 {
                     factory
-                        .AddConsole()
+                        .AddConsole().SetMinimumLevel(LogLevel.Trace)
                         .AddDebug();
                 })
                 .UseIISIntegration()

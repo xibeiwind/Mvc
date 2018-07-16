@@ -19,7 +19,7 @@
     <InternalAspNetCoreAnalyzersPackageVersion>2.2.0-preview1-34694</InternalAspNetCoreAnalyzersPackageVersion>
     <InternalAspNetCoreSdkPackageVersion>2.2.0-preview1-17099</InternalAspNetCoreSdkPackageVersion>
     <MicrosoftAspNetCoreAllPackageVersion>2.2.0-preview1-34694</MicrosoftAspNetCoreAllPackageVersion>
-    <MicrosoftAspNetCoreAnalyzerTestingPackageVersion>2.2.0-preview1-34694</MicrosoftAspNetCoreAnalyzerTestingPackageVersion>
+    <MicrosoftAspNetCoreAnalyzerTestingPackageVersion>2.2.0-a-preview1-a-16562</MicrosoftAspNetCoreAnalyzerTestingPackageVersion>
     <MicrosoftAspNetCoreAntiforgeryPackageVersion>2.2.0-preview1-34694</MicrosoftAspNetCoreAntiforgeryPackageVersion>
     <MicrosoftAspNetCoreAuthenticationCookiesPackageVersion>2.2.0-preview1-34694</MicrosoftAspNetCoreAuthenticationCookiesPackageVersion>
     <MicrosoftAspNetCoreAuthenticationCorePackageVersion>2.2.0-preview1-34694</MicrosoftAspNetCoreAuthenticationCorePackageVersion>

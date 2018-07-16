@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.Mvc.Analyzers.Infrastructure
 {
     public static class MvcTestSource
     {
-        private static readonly string ProjectDirectory = GetProjectDirectory();
+        internal static readonly string ProjectDirectory = GetProjectDirectory();
 
         public static TestSource Read(string testClassName, string testMethod)
         {
