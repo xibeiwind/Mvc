@@ -348,7 +348,6 @@ namespace Microsoft.AspNetCore.Mvc.Razor
             SectionWriters[name] = section;
         }
 
-
         /// <summary>
         /// Writes the specified <paramref name="value"/> with HTML encoding to <see cref="Output"/>.
         /// </summary>
@@ -430,6 +429,35 @@ namespace Microsoft.AspNetCore.Mvc.Razor
             if (!string.IsNullOrEmpty(value))
             {
                 Output.Write(value);
+            }
+        }
+        
+        /// <summary>
+        /// EXPERIMENTAL - WARNING HAXXXXX
+        /// </summary>
+        /// <param name="value"></param>
+        public virtual void WriteLiteral(ReadOnlySpan<char> value)
+        {
+            var htmlContent = new SpanHtmlContent(value);
+
+            var bufferedWriter = writer as ViewBufferTextWriter;
+            if (bufferedWriter == null || !bufferedWriter.IsBuffering)
+            {
+                htmlContent.WriteTo(writer, encoder);
+            }
+            else
+            {
+                if (value is IHtmlContentContainer htmlContentContainer)
+                {
+                    // This is likely another ViewBuffer.
+                    htmlContentContainer.MoveTo(bufferedWriter.Buffer);
+                }
+                else
+                {
+                    // Perf: This is the common case for IHtmlContent, ViewBufferTextWriter is inefficient
+                    // for writing character by character.
+                    bufferedWriter.Buffer.AppendHtml(htmlContent);
+                }
             }
         }
 
