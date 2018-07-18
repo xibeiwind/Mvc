@@ -36,8 +36,8 @@ namespace HtmlGenerationWebSite
                     defaults: new { action = "Index" });
                 routes.MapEndpoint(
                     name: "productRoute",
-                    template: "Product/{action}",
-                    defaults: new { controller = "Product" });
+                    template: "HtmlGeneration_Product/{action}",
+                    defaults: new { controller = "HtmlGeneration_Product" });
                 routes.MapEndpoint(
                     name: "default",
                     template: "{controller}/{action}/{id?}",
