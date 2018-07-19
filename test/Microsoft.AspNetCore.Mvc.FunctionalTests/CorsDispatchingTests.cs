@@ -3,9 +3,9 @@
 
 namespace Microsoft.AspNetCore.Mvc.FunctionalTests
 {
-    public class CorsTests : CorsTestsBase<CorsWebSite.Startup>
+    public class CorsDispatchingTests : CorsTestsBase<CorsWebSite.StartupWithDispatching>
     {
-        public CorsTests(MvcTestFixture<CorsWebSite.Startup> fixture)
+        public CorsDispatchingTests(MvcTestFixture<CorsWebSite.StartupWithDispatching> fixture)
             : base(fixture)
         {
         }
