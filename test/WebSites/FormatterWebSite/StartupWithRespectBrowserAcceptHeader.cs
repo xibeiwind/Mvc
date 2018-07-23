@@ -10,7 +10,7 @@ namespace FormatterWebSite
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDispatcher();
+            
 
             services.AddMvc(options =>
             {
@@ -20,7 +20,7 @@ namespace FormatterWebSite
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseDispatcher();
+            app.UseGlobalRouting();
             app.UseMvcWithEndpoint(routes =>
             {
                 routes.MapEndpoint("ActionAsMethod", "{controller}/{action}",

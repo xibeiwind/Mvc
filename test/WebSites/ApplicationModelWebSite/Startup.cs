@@ -13,7 +13,7 @@ namespace ApplicationModelWebSite
         // Set up application services
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDispatcher();
+            
 
             services.AddMvc(options =>
             {
@@ -27,7 +27,7 @@ namespace ApplicationModelWebSite
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseDispatcher();
+            app.UseGlobalRouting();
 
             app.UseMvcWithEndpoint(routes =>
             {

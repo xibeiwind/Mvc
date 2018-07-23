@@ -23,12 +23,12 @@ namespace SimpleWebSite
                 .AddFormatterMappings(m => m.SetMediaTypeMappingForFormat("js", new MediaTypeHeaderValue("application/json")))
                 .AddJsonFormatters(j => j.Formatting = Formatting.Indented);
 
-            services.AddDispatcher();
+            
         }
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseDispatcher();
+            app.UseGlobalRouting();
 
             app.UseMvcWithEndpoint(routes =>
             {

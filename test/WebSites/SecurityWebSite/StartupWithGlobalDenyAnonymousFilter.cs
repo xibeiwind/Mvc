@@ -21,7 +21,7 @@ namespace SecurityWebSite
                     options.LogoutPath = "/Home/Logout";
                 }).AddCookie("Cookie2");
 
-            services.AddDispatcher();
+            
 
             services.AddMvc(o =>
             {
@@ -33,7 +33,7 @@ namespace SecurityWebSite
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseDispatcher();
+            app.UseGlobalRouting();
 
             app.UseAuthentication();
 

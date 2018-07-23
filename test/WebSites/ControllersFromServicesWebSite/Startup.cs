@@ -38,7 +38,7 @@ namespace ControllersFromServicesWebSite
                 .AddViewComponentsAsServices()
                 .AddTagHelpersAsServices();
 
-            services.AddDispatcher();
+            
 
             services.AddTransient<QueryValueService>();
             services.AddTransient<ValueService>();
@@ -59,7 +59,7 @@ namespace ControllersFromServicesWebSite
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseDispatcher();
+            app.UseGlobalRouting();
 
             app.UseMvcWithEndpoint(routes =>
             {

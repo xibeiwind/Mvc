@@ -13,14 +13,14 @@ namespace FilesWebSite
         // Set up application services
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDispatcher();
+            
 
             services.AddMvc();
         }
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseDispatcher();
+            app.UseGlobalRouting();
             app.UseMvcWithEndpoint(routes =>
             {
                 routes.MapEndpoint(name: null, template: "{controller}/{action}", defaults: null);

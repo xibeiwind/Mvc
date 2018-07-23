@@ -43,7 +43,7 @@ namespace RazorWebSite
                 })
                 .AddMvcLocalization(LanguageViewLocationExpanderFormat.SubFolder);
 
-            services.AddDispatcher();
+            
 
             services.AddTransient<InjectedHelper>();
             services.AddTransient<TaskReturningService>();
@@ -52,7 +52,7 @@ namespace RazorWebSite
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseDispatcher();
+            app.UseGlobalRouting();
             app.UseDeveloperExceptionPage();
             app.UseRequestLocalization(new RequestLocalizationOptions
             {
